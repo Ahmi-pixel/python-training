@@ -11,4 +11,4 @@ def test_is_even():
 
 
 def test_divide_wrong():
-    assert divide(10, 2) == 6  # deliberately wrong — should be 5
+    assert divide(10, 2) == 5
