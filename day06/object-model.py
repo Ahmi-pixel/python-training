@@ -1,58 +1,87 @@
-"""
-Day 6: Python Object Model & Dynamic Typing
-Demonstrates: aliasing, mutable default argument bug + fix, shallow vs deep copy.
-"""
-
 import copy
 
 
-def add_item_buggy(item, my_list=[]):
-    my_list.append(item)
-    return my_list
+# ============================================================
+# 1. Mutable Default Argument — The Bug
+# ============================================================
+
+def add_item_bug(item, items=[]):
+    items.append(item)
+    return items
 
 
-def add_item_fixed(item, my_list=None):
-    if my_list is None:
-        my_list = []
-    my_list.append(item)
-    return my_list
+first = add_item_bug("A")
+second = add_item_bug("B")
+
+print("Mutable Default Argument Bug:")
+print("first :", first)
+print("second:", second)
+
+# Both names point to the same list
+assert first is second
+assert first == ["A", "B"]
+assert second == ["A", "B"]
 
 
-def demo_bug():
-    a = add_item_buggy("a")
-    b = add_item_buggy("b")
-    assert a is b
-    assert a == ["a", "b"]
+# ============================================================
+# 2. Mutable Default Argument — The Fix
+# ============================================================
+
+def add_item_fixed(item, items=None):
+    if items is None:
+        items = []
+
+    items.append(item)
+    return items
 
 
-def demo_fix():
-    a = add_item_fixed("a")
-    b = add_item_fixed("b")
-    assert a is not b
-    assert a == ["a"]
-    assert b == ["b"]
+first = add_item_fixed("A")
+second = add_item_fixed("B")
+
+print("\nNone Sentinel Fix:")
+print("first :", first)
+print("second:", second)
+
+# Each call creates a separate list
+assert first is not second
+assert first == ["A"]
+assert second == ["B"]
 
 
-def demo_aliasing():
-    a = [1, 2, 3]
-    b = a
-    b.append(4)
-    assert a == [1, 2, 3, 4]
-    assert id(a) == id(b)
+# ============================================================
+# 3. Shallow Copy vs Deep Copy
+# ============================================================
+
+original = [["A", "B"], ["C", "D"]]
+
+shallow = copy.copy(original)
+deep = copy.deepcopy(original)
+
+# The outer lists are different
+assert original is not shallow
+assert original is not deep
+
+# Shallow copy shares the inner lists
+assert original[0] is shallow[0]
+
+# Deep copy creates new inner lists
+assert original[0] is not deep[0]
+
+# Demonstrate the difference
+shallow[0].append("X")
+deep[1].append("Y")
+
+print("\nShallow vs Deep Copy:")
+print("original:", original)
+print("shallow :", shallow)
+print("deep    :", deep)
+
+# Shallow copy changed the original's inner list
+assert original == [["A", "B", "X"], ["C", "D"]]
+assert shallow == [["A", "B", "X"], ["C", "D"]]
+
+# Deep copy did NOT change the original
+assert deep == [["A", "B"], ["C", "D", "Y"]]
 
 
-def demo_copy():
-    original = [[1, 2], [3, 4]]
-    shallow = copy.copy(original)
-    deep = copy.deepcopy(original)
-    shallow[0].append(99)
-    assert original == [[1, 2, 99], [3, 4]]
-    assert deep == [[1, 2], [3, 4]]
-
-
-if __name__ == "__main__":
-    demo_bug()
-    demo_fix()
-    demo_aliasing()
-    demo_copy()
-    print("All Day 6 assertions passed.")
+print("\nAll Day 6 assertions passed!")
