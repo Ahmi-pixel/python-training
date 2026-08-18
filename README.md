@@ -8,3 +8,4 @@
 - Day 3: Remotes, GitHub PR workflow, fetch vs pull ✅
 - Day 4: Rebase, cherry-pick, stash, reflog ✅
 - Day 5: GitHub Actions CI & Professional Workflow ✅
+- Day 6: The Python Object Model & Dynamic Typing ✅
