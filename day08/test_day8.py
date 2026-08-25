@@ -4,6 +4,8 @@ from mission import rate_limiter
 
 from mission import compose
 
+import pytest
+
 
 # Test Rate Limitter
 
@@ -27,6 +29,19 @@ def test_rate_limiter_resets():
 
     assert limiter() == "Allowed"
 
+def test_rate_limiter_closure():
+    # A closure keeps the limiter configuration available after creation.
+    limiter = rate_limiter(2, 3)
+
+    # Inspect the captured values to confirm the limit and window are retained.
+    captured_values = [
+        cell.cell_contents
+        for cell in limiter.__closure__
+    ]
+
+    assert 2 in captured_values
+    assert 3 in captured_values
+
 # Test Compose()
 
 def add_one(x):
@@ -45,7 +60,7 @@ def square(x):
 
 
 def test_compose():
-    # Compose functions from right to left and verify the final result.
+    # Apply the functions from left to right and verify the final result.
     f = compose(add_one, double, square)
 
     assert f(3) == 64
@@ -76,3 +91,33 @@ def test_pipeline():
         "role": "developer",
         "active": True,
     }
+
+from mission import (
+    add_one,
+    double,
+    square,
+    compose,
+)
+
+
+# pytest.mark.parametrize lets one test run several times with different data.
+# Each tuple below supplies an input value and the result expected for that input.
+# This avoids writing a separate test function for every input value.
+@pytest.mark.parametrize(
+    # Check the same composed function with several input and expected values.
+    "x, expected",
+    [
+        (1, 17),
+        (2, 37),
+        (3, 65),
+        (5, 145),
+    ],
+)
+def test_compose(x, expected):
+    # The composed steps are add_one, double, square, then add_one.
+    f = compose(add_one, double, square, add_one)
+
+    # Each parameter pair verifies one complete composition result.
+    assert f(x) == expected
+
+
