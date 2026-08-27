@@ -1,0 +1,4 @@
+INFO,2026-08-25,Ahmad,Login successful
+ERROR,2026-08-25,Ali,Database connection failed
+WARNING,2026-08-25,Sara,Disk space low
+INFO,2026-08-26,Ahmad,Logged out
