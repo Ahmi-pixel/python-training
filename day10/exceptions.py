@@ -1,0 +1,5 @@
+print(issubclass(ValueError, Exception))
+print(issubclass(TypeError, Exception))
+print(issubclass(FileNotFoundError, OSError))
+print(issubclass(OSError, Exception))
+print(issubclass(Exception, BaseException))
